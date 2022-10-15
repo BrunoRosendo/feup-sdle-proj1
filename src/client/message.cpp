@@ -1,6 +1,6 @@
 #include "message.h"
-#include <openssl/md5.h>
 #include <ctime>
+#include <functional>
 
 using namespace std;
 
@@ -66,11 +66,14 @@ string parse_message(int size, char** raw_msg) {
     }
     string message = ss_msg.str();
     message = message.substr(0, message.length() - 1);
-    return message;
+
+    string id = get_hash(message);
+    return id + "\n" + message;
 }
 
 string get_hash(string msg) {
     time_t result = time(nullptr);
     msg = msg + asctime(localtime(&result));
-    unsigned char* hash = MD5(msg, msg.length(), NULL);
+    size_t str_hash = hash<string>{}(msg);
+    return to_string(str_hash);
 }
