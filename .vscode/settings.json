@@ -1,9 +1,0 @@
-{
-  "files.associations": {
-    ".js": "javascriptreact",
-    ".pl": "prolog",
-    "sstream": "cpp",
-    "xstring": "cpp",
-    "string": "cpp"
-  }
-}

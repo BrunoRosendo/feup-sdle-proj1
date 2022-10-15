@@ -3,7 +3,7 @@ CFLAGS = -Wall
 LIBS = -lzmq -lzmqpp
 
 BROKER_SRC = broker/broker.cpp
-CLIENT_SRC = client/client.cpp client/message.cpp
+CLIENT_SRC = client/client.cpp client/message.cpp client/operations.cpp
 
 BROKER_OBJ = $(BROKER_SRC:.cpp=.o)
 CLIENT_OBJ = $(CLIENT_SRC:.cpp=.o)
