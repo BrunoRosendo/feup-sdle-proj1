@@ -6,6 +6,8 @@
 // - randomly runs slowly, or exits to simulate a crash.
 //
 #include <zmqpp/zmqpp.hpp>
+#include <unistd.h>
+
 #define within(num) (int) ((float)((num) * random ()) / (RAND_MAX + 1.0))
 using namespace std;
 
