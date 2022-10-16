@@ -2,7 +2,7 @@ CC=g++
 CFLAGS = -Wall
 LIBS = -lzmq -lzmqpp
 
-BROKER_SRC = broker/broker.cpp
+BROKER_SRC = broker/broker.cpp broker/message.cpp broker/TopicManager.cpp
 CLIENT_SRC = client/client.cpp client/message.cpp client/operations.cpp
 
 BROKER_OBJ = $(BROKER_SRC:.cpp=.o)
@@ -24,4 +24,4 @@ $(CLIENT_EXEC): $(CLIENT_OBJ)
 	$(CC) $(CFLAGS) -o $@ $(CLIENT_OBJ) $(LIBS)
 
 clean:
-	rm -rf $(BROKER_EXEC) $(CLIENT_EXEC) client/*.o client/*.d server/*.o server/*.d
+	rm -rf $(BROKER_EXEC) $(CLIENT_EXEC) client/*.o client/*.d broker/*.o broker/*.d
