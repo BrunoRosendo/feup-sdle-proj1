@@ -13,8 +13,9 @@ void TopicManager::handleSubscription(string topicName, string clientId) {
     }
 
     // add the client to the topic's subscribers
+
     if (topics[topicName].second.find(clientId) == topics[topicName].second.end()) {
-        topics[topicName].second[clientId] = 0;
+        topics[topicName].second[clientId] = make_pair("", 0);
     }
     else {
         string err = "Client already subscribed to topic";
@@ -38,7 +39,7 @@ void TopicManager::handleUnsubscription(string topicName, string clientId) {
     }
 }
 
-void TopicManager::handlePut(string topicName, string message) {
+void TopicManager::handlePut(string topicName, string messageId, string message) {
     // check if the topic exists
     if (topics.find(topicName) == topics.end()) {
         string err = "Topic does not exist";
@@ -46,9 +47,9 @@ void TopicManager::handlePut(string topicName, string message) {
     }
 
     // add the message to the topic's queue
-    addTopicMsg(topicName, message);
+    addTopicMsg(topicName, messageId, message);
 }
-string TopicManager::handleGet(string topicName, string clientId) {
+string TopicManager::handleGet(string topicName, string clientId, string messageId) {
     // check if the topic exists
     if (topics.find(topicName) == topics.end()) {
         string err = "Topic does not exist";
@@ -56,26 +57,33 @@ string TopicManager::handleGet(string topicName, string clientId) {
     }
 
     // check if the client is subscribed to the topic
+    
     if (topics[topicName].second.find(clientId) == topics[topicName].second.end()) {
         string err = "Client is not subscribed to the topic";
         throw err;
     }
 
     // get the client's next read message index
-    uint nextReadMsgIndex = topics[topicName].second[clientId];
+    uint nextReadMsgIndex = topics[topicName].second[clientId].second;
+    string prevMsgId = topics[topicName].second[clientId].first;
 
+    if (messageId != prevMsgId && prevMsgId != "") {
+        nextReadMsgIndex++;
+    }
+
+    cout << "nextReadMsgIndex: " << nextReadMsgIndex << endl;
     // check if there are new messages
     if (nextReadMsgIndex >= topics[topicName].first.size()) {
         string err = "No new messages for the client";
         throw err;
     }
 
-    // get the new message
-    string msg = topics[topicName].first[nextReadMsgIndex];
-
-    // TODO this should be done after receiving ACK from the client
     // update the client's next read message index
-    // topics[topicName].second[clientId] = nextReadMsgIndex + 1;
+    topics[topicName].second[clientId].second = nextReadMsgIndex;
+    topics[topicName].second[clientId].first = messageId;
+
+    // get the new message
+    string msg = topics[topicName].first[nextReadMsgIndex].second;
 
     return msg;
 }
@@ -83,22 +91,27 @@ string TopicManager::handleGet(string topicName, string clientId) {
 
 void TopicManager::createTopic(string topicName) {
     if (topics.find(topicName) == topics.end()) {
-        topics[topicName] = make_pair(deque<string>(), map<string, uint>());
+        topics[topicName] = make_pair(msgs(), subscribers());
+        messagesIds[topicName] = set<string>();
     }
 }
 void TopicManager::deleteTopic(string topicName) {
     if (topics.find(topicName) != topics.end()) {
         topics.erase(topicName);
+        messagesIds.erase(topicName);
     }
 }
-void TopicManager::addTopicMsg(string topicName, string msg) {
-    if (topics.find(topicName) != topics.end()) {
-        topics[topicName].first.push_back(msg);
+void TopicManager::addTopicMsg(string topicName, string messageId, string msg) {
+    if (topics.find(topicName) != topics.end() && messagesIds[topicName].find(messageId) == messagesIds[topicName].end()) {
+        topics[topicName].first.push_back(make_pair(messageId, msg));
+        messagesIds[topicName].insert(messageId);
     }
 }
 void TopicManager::removeTopicMsg(string topicName) {
     if (topics.find(topicName) != topics.end()) {
+        string messageId = topics[topicName].first.front().first;
         topics[topicName].first.pop_front();
+        messagesIds[topicName].erase(messageId);
     }
 }
 
