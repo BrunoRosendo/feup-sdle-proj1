@@ -3,3 +3,4 @@ libs
 .vscode
 *.o
 *.d
+data

@@ -59,6 +59,7 @@ string send_message(string msg) {
     }
 }
 
+
 string parse_message(int size, char** raw_msg) {
     stringstream ss_msg;
     for (int i = 1; i < size; i++) {
@@ -69,6 +70,46 @@ string parse_message(int size, char** raw_msg) {
 
     string id = get_hash(message);
     return id + "\n" + message;
+}
+
+string get_filename(string clientId, string topicId, string op) {
+    if (op == GET_MSG) {
+        return FOLDER_PATH + clientId + "/" + GET_PATH + topicId;
+    } else if (op == PUT_MSG) {
+        return FOLDER_PATH + clientId + "/" + PUT_PATH + topicId;
+    }
+
+    return "";
+}
+
+string get_last_message(string clientId, string topicId, string op){
+    fstream file;
+    string fileName;
+    if (op == GET_MSG) {
+        fileName = FOLDER_PATH + clientId + "/" + GET_PATH + topicId + ".txt";
+    } else if (op == PUT_MSG) {
+        fileName = FOLDER_PATH + clientId + "/" + PUT_PATH + topicId + ".txt";
+    }
+
+    string lastMessage;
+    file.open(fileName, fstream::out | fstream::in);
+    if (file.is_open()) {
+      if (file.peek() != EOF) {
+          getline(file, lastMessage);
+      }
+      file.close();
+    }
+
+    return lastMessage;
+}
+
+void save_error_message(string clientId, string topicId, string op, string message) {
+    fstream file;
+    string fileName = get_filename(clientId, topicId, op);
+
+    file.open(fileName, fstream::out | fstream::trunc);
+    file << message;
+    file.close();
 }
 
 string get_hash(string msg) {
