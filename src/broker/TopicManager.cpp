@@ -1,8 +1,31 @@
 #include "TopicManager.h"
 
-// define the methods of the TopicManager class
-TopicManager::TopicManager() {
-    // nothing to do here
+TopicManager::TopicManager() {}
+
+void TopicManager::createTopic(string topicName) {
+    if (topics.find(topicName) == topics.end()) {
+        topics[topicName] = make_pair(msgs(), subscribers());
+        messagesIds[topicName] = set<string>();
+    }
+}
+void TopicManager::deleteTopic(string topicName) {
+    if (topics.find(topicName) != topics.end()) {
+        topics.erase(topicName);
+        messagesIds.erase(topicName);
+    }
+}
+void TopicManager::addTopicMsg(string topicName, string messageId, string msg) {
+    if (topics.find(topicName) != topics.end() && messagesIds[topicName].find(messageId) == messagesIds[topicName].end()) {
+        topics[topicName].first.push_back(make_pair(messageId, msg));
+        messagesIds[topicName].insert(messageId);
+    }
+}
+void TopicManager::removeTopicMsg(string topicName) {
+    if (topics.find(topicName) != topics.end()) {
+        string messageId = topics[topicName].first.front().first;
+        topics[topicName].first.pop_front();
+        messagesIds[topicName].erase(messageId);
+    }
 }
 
 void TopicManager::handleSubscription(string topicName, string clientId) {
@@ -71,7 +94,6 @@ string TopicManager::handleGet(string topicName, string clientId, string message
         nextReadMsgIndex++;
     }
 
-    cout << "nextReadMsgIndex: " << nextReadMsgIndex << endl;
     // check if there are new messages
     if (nextReadMsgIndex >= topics[topicName].first.size()) {
         string err = "No new messages for the client";
@@ -87,34 +109,3 @@ string TopicManager::handleGet(string topicName, string clientId, string message
 
     return msg;
 }
-
-
-void TopicManager::createTopic(string topicName) {
-    if (topics.find(topicName) == topics.end()) {
-        topics[topicName] = make_pair(msgs(), subscribers());
-        messagesIds[topicName] = set<string>();
-    }
-}
-void TopicManager::deleteTopic(string topicName) {
-    if (topics.find(topicName) != topics.end()) {
-        topics.erase(topicName);
-        messagesIds.erase(topicName);
-    }
-}
-void TopicManager::addTopicMsg(string topicName, string messageId, string msg) {
-    if (topics.find(topicName) != topics.end() && messagesIds[topicName].find(messageId) == messagesIds[topicName].end()) {
-        topics[topicName].first.push_back(make_pair(messageId, msg));
-        messagesIds[topicName].insert(messageId);
-    }
-}
-void TopicManager::removeTopicMsg(string topicName) {
-    if (topics.find(topicName) != topics.end()) {
-        string messageId = topics[topicName].first.front().first;
-        topics[topicName].first.pop_front();
-        messagesIds[topicName].erase(messageId);
-    }
-}
-
-
-
-

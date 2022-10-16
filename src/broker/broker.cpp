@@ -11,8 +11,6 @@
 #include "message.h"
 #include "TopicManager.h"
 
-#define within(num) (int) ((float)((num) * random ()) / (RAND_MAX + 1.0))
-
 using namespace std;
 
 /* 
@@ -28,13 +26,12 @@ int main ()
 
     zmqpp::context_t context;
     zmqpp::socket_t server(context, zmqpp::socket_type::reply);
-    server.bind("tcp://*:5555");
-    cout << "I: listening on tcp://*:5555" << endl;
+    server.bind(SERVER_URL);
+    cout << "I: listening on " << SERVER_URL << endl;
  
     TopicManager topicManager = TopicManager();
 
-    int cycles = 0;
-    while (1) {
+    while (true) {
         string reply = SUCCESS_MSG;
         string request;
         zmqpp::message message;
@@ -71,8 +68,8 @@ int main ()
             }
         }
         catch (string error){
-            stringstream ss(FAIL_MSG);
-            ss << " " << error;
+            stringstream ss;
+            ss << FAIL_MSG << " " << error;
             reply = ss.str();
         }
         

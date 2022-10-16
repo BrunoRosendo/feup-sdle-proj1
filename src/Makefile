@@ -2,7 +2,7 @@ CC=g++
 CFLAGS = -Wall
 LIBS = -lzmq -lzmqpp
 
-BROKER_SRC = broker/broker.cpp broker/message.cpp broker/TopicManager.cpp
+BROKER_SRC = broker/broker.cpp broker/TopicManager.cpp
 CLIENT_SRC = client/client.cpp client/message.cpp client/operations.cpp
 
 BROKER_OBJ = $(BROKER_SRC:.cpp=.o)

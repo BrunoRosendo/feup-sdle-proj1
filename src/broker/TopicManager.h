@@ -1,5 +1,4 @@
-#ifndef TOPICMANAGER_H
-#define TOPICMANAGER_H
+#pragma once
 
 #include <iostream>
 #include <map>
@@ -30,5 +29,3 @@ class TopicManager {
         void handlePut(string topicName, string messageId, string message);
         string handleGet(string topicName, string clientId, string messageId);
 };
-
-#endif
