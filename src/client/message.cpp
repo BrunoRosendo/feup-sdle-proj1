@@ -18,7 +18,7 @@ zmqpp::socket_t s_client_socket (zmqpp::context_t & context) {
     client.set(zmqpp::socket_option::linger, linger);
     return client;
 }
- 
+
 string send_message(string msg) {
     zmqpp::context_t context;
     zmqpp::socket_t client = s_client_socket(context);
@@ -58,7 +58,6 @@ string send_message(string msg) {
     }
 }
 
-
 string parse_message(int size, char** raw_msg, string* lastId) {
     stringstream ss_msg;
     for (int i = 1; i < size; i++) {
@@ -78,12 +77,16 @@ string get_filename(string clientId, string topicId, string op) {
         return FOLDER_PATH + clientId + "/" + GET_PATH + topicId + ".txt";
     } else if (op == PUT_MSG) {
         return FOLDER_PATH + clientId + "/" + PUT_PATH + topicId + ".txt";
+    } else if (op == SUBSCRIBE_MSG) {
+        return FOLDER_PATH + clientId + "/" + SUB_PATH + topicId + ".txt";
+    } else if (op == UNSUBSCRIBE_MSG) {
+        return FOLDER_PATH + clientId + "/" + UNSUB_PATH + topicId + ".txt";
     }
 
     return "";
 }
 
-string get_last_message(string clientId, string topicId, string op){
+string get_last_message_id(string clientId, string topicId, string op){
     ifstream file;
     string fileName = get_filename(clientId, topicId, op);
 
@@ -100,7 +103,7 @@ string get_last_message(string clientId, string topicId, string op){
 }
 
 string save_message_id(string clientId, string topicId, string op, string message) {
-    string directory = FOLDER_PATH + clientId;;
+    string directory = FOLDER_PATH + clientId;
     if (!filesystem::is_directory(directory) || !filesystem::exists(directory))
         filesystem::create_directories(directory);
 
@@ -119,4 +122,8 @@ string get_hash(string msg) {
     msg = msg + to_string(start.time_since_epoch().count());
     size_t str_hash = hash<string>{}(msg);
     return to_string(str_hash);
+}
+
+string create_message(string message_id, string client_id, string topicId, string op, string msg = "") {
+    return message_id + "\n" + op + "\n" + client_id + "\n" + topicId + "\n" + msg;
 }

@@ -25,6 +25,8 @@ using namespace std;
 const string FOLDER_PATH = "../data/client/";
 const string GET_PATH = "get_";
 const string PUT_PATH = "put_";
+const string SUB_PATH = "sub_";
+const string UNSUB_PATH = "unsub_";
 
  
 /*
@@ -51,7 +53,7 @@ string parse_message(int size, char** raw_msg, string* lastId);
  * @param op operation to be performed
  * @return last message id
 */
-string get_last_message(string clientId, string topicId, string op);
+string get_last_message_id(string clientId, string topicId, string op);
 
 /**
  * Saves the message that the client wanted to send to a topic and failed in the corresponding
@@ -73,5 +75,15 @@ string save_message_id(string clientId, string topicId, string op, string messag
 string get_filename(string clientId, string topicId, string op);
 
 string get_hash(string msg);
+
+/**
+ * Creates a new message with the given parameters
+ * @param clientId client id
+ * @param topicId topic id
+ * @param op operation to be performed
+ * @param msg message to be sent
+ * @return message
+*/
+string create_message(string message_id, string client_id, string topicId, string op, string msg) {
 
 #endif
