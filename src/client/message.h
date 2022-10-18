@@ -40,7 +40,7 @@ string send_message(string msg);
 /**
   Parses the cmd line arguments into a formatted message
 */
-string parse_message(int size, char** raw_msg);
+string parse_message(int size, char** raw_msg, string* lastId);
 
 /**
  * Gets the last message id that the client wanted to send to a topic and failed
@@ -60,7 +60,7 @@ string get_last_message(string clientId, string topicId, string op);
  * @param op operation to be performed
  * @param message message to be saved
 */
-void save_error_message(string clientId, string topicId, string op, string message);
+string save_message_id(string clientId, string topicId, string op, string message);
 
 /**
  * Gets the filename of the corresponding clientId, topicId and operation

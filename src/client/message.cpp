@@ -27,7 +27,6 @@ string send_message(string msg) {
 
     while (true) {
         client.send(msg);
-        sleep(1); // TODO what is this for?
 
         bool expect_reply = true;
         while (expect_reply) {
@@ -60,7 +59,7 @@ string send_message(string msg) {
 }
 
 
-string parse_message(int size, char** raw_msg) {
+string parse_message(int size, char** raw_msg, string* lastId) {
     stringstream ss_msg;
     for (int i = 1; i < size; i++) {
         ss_msg << raw_msg[i] << "\n";
@@ -68,11 +67,12 @@ string parse_message(int size, char** raw_msg) {
     string message = ss_msg.str();
     message = message.substr(0, message.length() - 1);
 
-    string id = get_hash(message);
+    string id = lastId->empty() ? get_hash(message) : *lastId;
+    *lastId = id;
     return id + "\n" + message;
 }
 
-// TODO Should this be done for sub/unsub as well? Maybe do for every message?
+// Other message types are idempotent, order shouldn't matter
 string get_filename(string clientId, string topicId, string op) {
     if (op == GET_MSG) {
         return FOLDER_PATH + clientId + "/" + GET_PATH + topicId + ".txt";
@@ -99,7 +99,7 @@ string get_last_message(string clientId, string topicId, string op){
     return lastMessage;
 }
 
-void save_error_message(string clientId, string topicId, string op, string message) {
+string save_message_id(string clientId, string topicId, string op, string message) {
     string directory = FOLDER_PATH + clientId;;
     if (!filesystem::is_directory(directory) || !filesystem::exists(directory))
         filesystem::create_directories(directory);
@@ -110,6 +110,8 @@ void save_error_message(string clientId, string topicId, string op, string messa
     file.open(fileName); // TODO is truncate right?
     file << message;
     file.close();
+
+    return fileName;
 }
 
 string get_hash(string msg) {
