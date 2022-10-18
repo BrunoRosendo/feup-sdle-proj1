@@ -12,7 +12,7 @@
 
 using namespace std;
 
-typedef map<string, pair<string, uint>> subscribers; // <clientId, <messageId, nextReadMsgIndex>>
+typedef map<string, pair<string, uint>> subscribers; // <clientId, <messageId, lastReadMsgIndex>>
 typedef deque<pair<string, string>> msgs; // <messageId, message>
 
 class TopicManager {

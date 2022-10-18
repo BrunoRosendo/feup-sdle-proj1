@@ -92,25 +92,25 @@ string TopicManager::handleGet(string topicName, string clientId, string message
     }
 
     // get the client's next read message index
-    uint nextReadMsgIndex = topics[topicName].second[clientId].second;
+    uint lastReadMsgIndex = topics[topicName].second[clientId].second;
     string prevMsgId = topics[topicName].second[clientId].first;
 
     if (messageId != prevMsgId && prevMsgId != "") {
-        nextReadMsgIndex++;
+        lastReadMsgIndex++;
     }
 
     // check if there are new messages
-    if (nextReadMsgIndex >= topics[topicName].first.size()) {
+    if (lastReadMsgIndex >= topics[topicName].first.size()) {
         string err = "No new messages for the client";
         throw err;
     }
 
     // update the client's next read message index
-    topics[topicName].second[clientId].second = nextReadMsgIndex;
+    topics[topicName].second[clientId].second = lastReadMsgIndex;
     topics[topicName].second[clientId].first = messageId;
 
     // get the new message
-    string msg = topics[topicName].first[nextReadMsgIndex].second;
+    string msg = topics[topicName].first[lastReadMsgIndex].second;
 
     return msg;
 }
@@ -175,9 +175,9 @@ istream& operator>> (istream& is, TopicManager& tm) {
         is >> subscribersSize;
         for (uint j = 0; j < subscribersSize; j++) {
             string clientId, msgId;
-            uint nextReadMsgIndex;
-            is >> clientId >> msgId >> nextReadMsgIndex;
-            tm.topics[topicName].second[clientId] = make_pair(msgId, nextReadMsgIndex);
+            uint lastReadMsgIndex;
+            is >> clientId >> msgId >> lastReadMsgIndex;
+            tm.topics[topicName].second[clientId] = make_pair(msgId, lastReadMsgIndex);
         }
     }
 
