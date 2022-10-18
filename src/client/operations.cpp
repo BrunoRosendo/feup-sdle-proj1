@@ -35,7 +35,10 @@ string get_operation(string msg) {
 
 bool confirmed_operation(string msg) {
   string res = send_message(msg);
-  if (res != ACK_MSG) {
+  if (res == NACK_MSG) {
+    cout << "ERROR: unexpected server error!" << endl;
+    return false;
+  } else if (res != ACK_MSG) {
     cout << "ERROR: server has the wrong specification!" << endl;
     return false;
   }

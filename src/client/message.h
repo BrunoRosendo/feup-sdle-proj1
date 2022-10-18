@@ -12,7 +12,8 @@
 #define REQUEST_RETRIES     3       //  Before we abandon
 #define SERVER_URL "tcp://localhost:5555"
 
-#define ACK_MSG "ACK"
+#define ACK_MSG "SUCCESS"
+#define NACK_MSG "FAIL"
 #define GET_MSG "get"
 #define PUT_MSG "put"
 #define UNSUBSCRIBE_MSG "unsub"
