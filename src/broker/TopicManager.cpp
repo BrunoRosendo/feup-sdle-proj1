@@ -1,5 +1,8 @@
 #include "TopicManager.h"
 
+#include <climits>
+
+
 TopicManager::TopicManager() {
     ifstream fin(DATA_FILE);
     if (!fin.is_open()) return;
@@ -18,6 +21,7 @@ void TopicManager::deleteTopic(string topicName) {
     if (topics.find(topicName) != topics.end()) {
         topics.erase(topicName);
         messagesIds.erase(topicName);
+        lastMessages.erase(topicName);
     }
 }
 void TopicManager::addTopicMsg(string topicName, string messageId, string msg) {
@@ -81,6 +85,8 @@ void TopicManager::handleUnsubscription(string topicName, string clientId, strin
         string err = "Client not subscribed to topic";
         throw err;
     }
+
+    garbageCollectTopics(topicName);
 }
 
 void TopicManager::handlePut(string topicName, string messageId, string message) {
@@ -125,10 +131,40 @@ string TopicManager::handleGet(string topicName, string clientId, string message
     topics[topicName].second[clientId].second = lastReadMsgIndex;
     topics[topicName].second[clientId].first = messageId;
 
+    cout << "lastReadMsgIndex: " << lastReadMsgIndex << endl;
+
     // get the new message
     string msg = topics[topicName].first[lastReadMsgIndex].second;
+    
+    garbageCollectMessages(topicName);
 
     return msg;
+}
+
+void TopicManager::garbageCollectMessages(string topicName) {
+    uint min = UINT_MAX;
+    if (topics.find(topicName) != topics.end()) {
+        for (auto& client : topics[topicName].second) {
+            if (client.second.second < min) {
+                min = client.second.second;
+            }
+        }
+
+        for (uint i = 0; i < min; i++) {
+            removeTopicMsg(topicName);
+        }
+
+        for (auto& client : topics[topicName].second) {
+            client.second.second -= min;
+        }
+    }
+}
+void TopicManager::garbageCollectTopics(string topicName) {
+    if (topics.find(topicName) != topics.end()) {
+        if (topics[topicName].second.empty()) {
+            deleteTopic(topicName);
+        }
+    }
 }
 
 void TopicManager::serialize() {
