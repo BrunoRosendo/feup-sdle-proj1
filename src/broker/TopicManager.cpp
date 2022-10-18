@@ -43,7 +43,7 @@ void TopicManager::handleSubscription(string topicName, string clientId, string 
 
     // add the client to the topic's subscribers
     if (topics[topicName].second.find(clientId) == topics[topicName].second.end()) {
-        topics[topicName].second[clientId] = make_pair("_", 0);
+        topics[topicName].second[clientId] = make_pair("_", topics[topicName].first.size());
         if (lastMessages[topicName].find(clientId) == lastMessages[topicName].end()) {
             lastMessages[topicName][clientId] = make_pair("_", "_");
         }
