@@ -15,9 +15,7 @@ using namespace std;
 
 /* 
 TODO: 
-- Add persistence the topics & messageIds (could be built from the topics) data structures of TopicManager
 - Garbage Collection for topic messages (seen by every subscriber) & topics without subscribers
-
 */
 
 int main ()
@@ -61,19 +59,19 @@ int main ()
                 topicManager.handleUnsubscription(topicId, clientId);
             } else if (op == GET_MSG) {
                 string payload = topicManager.handleGet(topicId, clientId, messageId);
-                reply += " " + payload;
+                reply = payload;
             } else {
                 string err = "Invalid operation";
                 throw err;
             }
+            topicManager.serialize(); // save state
         }
         catch (string error){
             stringstream ss;
             ss << FAIL_MSG << " " << error;
             reply = ss.str();
         }
-        
-        sleep (1); // Do some heavy work
+
         server.send(reply);       
     }
     return 0;

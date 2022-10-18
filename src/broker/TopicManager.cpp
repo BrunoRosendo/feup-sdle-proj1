@@ -1,6 +1,11 @@
 #include "TopicManager.h"
 
-TopicManager::TopicManager() {}
+TopicManager::TopicManager() {
+    ifstream fin(DATA_FILE);
+    if (!fin.is_open()) return;
+    fin >> *this;
+    fin.close();
+}
 
 void TopicManager::createTopic(string topicName) {
     if (topics.find(topicName) == topics.end()) {
@@ -108,4 +113,89 @@ string TopicManager::handleGet(string topicName, string clientId, string message
     string msg = topics[topicName].first[nextReadMsgIndex].second;
 
     return msg;
+}
+
+void TopicManager::serialize() {
+    if (!filesystem::is_directory(DATA_PATH) || !filesystem::exists(DATA_PATH))
+        filesystem::create_directories(DATA_PATH);
+
+    ofstream fout(DATA_FILE);
+    fout << *this;
+    fout.close();
+}
+
+// Serialize TopicManager fields to os
+ostream& operator<< (ostream& os, TopicManager& tm) {
+    os << tm.topics.size() << endl;
+    for (auto& topic : tm.topics) {
+        os << topic.first << endl;
+        os << topic.second.first.size() << endl;
+        for (auto& msg : topic.second.first) {
+            os << msg.first << endl;
+            os << msg.second << endl;
+        }
+        os << topic.second.second.size() << endl;
+        for (auto& subscriber : topic.second.second) {
+            os << subscriber.first << endl;
+            os << subscriber.second.first << endl;
+            os << subscriber.second.second << endl;
+        }
+    }
+
+    os << tm.messagesIds.size() << endl;
+    for (auto& topic : tm.messagesIds) {
+        os << topic.first << endl;
+        os << topic.second.size() << endl;
+        for (auto& msgId : topic.second) {
+            os << msgId << endl;
+        }
+    }
+
+    return os;
+}
+
+// Deserialize TopicManager fields from is
+istream& operator>> (istream& is, TopicManager& tm) {
+    uint topicsSize;
+    is >> topicsSize;
+    for (uint i = 0; i < topicsSize; i++) {
+        string topicName;
+        is >> topicName;
+        tm.topics[topicName] = make_pair(msgs(), subscribers());
+
+        uint msgsSize;
+        is >> msgsSize;
+        for (uint j = 0; j < msgsSize; j++) {
+            string msgId, msg;
+            is >> msgId >> msg;
+            tm.topics[topicName].first.push_back(make_pair(msgId, msg));
+        }
+
+        uint subscribersSize;
+        is >> subscribersSize;
+        for (uint j = 0; j < subscribersSize; j++) {
+            string clientId, msgId;
+            uint nextReadMsgIndex;
+            is >> clientId >> msgId >> nextReadMsgIndex;
+            tm.topics[topicName].second[clientId] = make_pair(msgId, nextReadMsgIndex);
+        }
+    }
+
+    uint messagesIdsSize;
+    is >> messagesIdsSize;
+    for (uint i = 0; i < messagesIdsSize; i++) {
+        string topicName;
+        is >> topicName;
+        tm.messagesIds[topicName] = set<string>();
+
+        uint msgIdsSize;
+        is >> msgIdsSize;
+        for (uint j = 0; j < msgIdsSize; j++) {
+            string msgId;
+            is >> msgId;
+            tm.messagesIds[topicName].insert(msgId);
+        }
+    }
+
+    return is;
 }

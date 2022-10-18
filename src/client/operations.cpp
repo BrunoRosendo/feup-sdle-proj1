@@ -19,7 +19,7 @@ void parse_op(int argc, string op) {
 
 void process_operation(string op, string msg) {
   if (op == GET_MSG) {
-    get_operation(msg);
+    if (!get_operation(msg)) return;
   } else if (op == PUT_MSG || op == UNSUBSCRIBE_MSG || op == SUBSCRIBE_MSG) {
     if (!confirmed_operation(msg)) return;
   }
@@ -27,16 +27,21 @@ void process_operation(string op, string msg) {
   cout << "Operation successful!" << endl;
 }
 
-string get_operation(string msg) {
+bool get_operation(string msg) {
   string res = send_message(msg);
+  if (res.rfind(NACK_MSG, 0) == 0) {
+    cout << "ERROR (server): " << res << endl;
+    return false;
+  }
+
   cout << "Received message from the topic: " << res << endl;
-  return res;
+  return true;
 }
 
 bool confirmed_operation(string msg) {
   string res = send_message(msg);
-  if (res == NACK_MSG) {
-    cout << "ERROR: unexpected server error!" << endl;
+  if (res.rfind(NACK_MSG, 0) == 0) {
+    cout << "ERROR (server): " << res << endl;
     return false;
   } else if (res != ACK_MSG) {
     cout << "ERROR: server has the wrong specification!" << endl;

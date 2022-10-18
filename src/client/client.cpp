@@ -33,8 +33,7 @@ int main(int argc, char** argv) {
 
     try {
         cout << "asked for: " << messageId << endl;
-        string response = send_message(message);
-        cout << "Server response: " << response << endl;
+        process_operation(op, message);
         // if the message was sent successfully, then delete the last message from file
         remove(fileName.c_str());
     }

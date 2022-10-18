@@ -4,6 +4,11 @@
 #include <map>
 #include <set>
 #include <deque>
+#include <filesystem>
+#include <fstream>
+
+#define DATA_PATH "../data/broker/"
+#define DATA_FILE "../data/broker/topic_manager.txt"
 
 using namespace std;
 
@@ -28,4 +33,11 @@ class TopicManager {
         void handleUnsubscription(string topicName, string clientId);
         void handlePut(string topicName, string messageId, string message);
         string handleGet(string topicName, string clientId, string messageId);
+
+        void serialize();
+        friend istream& operator>> (istream& is, TopicManager& tm);
+        friend ostream& operator<< (ostream& os, TopicManager& tm);
 };
+
+istream& operator>> (istream& is, TopicManager& tm);
+ostream& operator<< (ostream& os, TopicManager& tm);
