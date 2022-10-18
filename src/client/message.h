@@ -84,6 +84,6 @@ string get_hash(string msg);
  * @param msg message to be sent
  * @return message
 */
-string create_message(string message_id, string client_id, string topicId, string op, string msg) {
+string create_message(string message_id, string client_id, string topicId, string op, string msg = "");
 
 #endif

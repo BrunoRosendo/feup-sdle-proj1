@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     }
 
     try {
-        check_subscription(clientId, topicId);
+        check_subscription(clientId, topicId, op);
     } catch (string msg) {
         cout << msg << "\n";
         cout << "ERROR: could not restore subscription state from failure" << "\n";

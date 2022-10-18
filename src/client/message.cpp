@@ -124,6 +124,6 @@ string get_hash(string msg) {
     return to_string(str_hash);
 }
 
-string create_message(string message_id, string client_id, string topicId, string op, string msg = "") {
+string create_message(string message_id, string client_id, string topicId, string op, string msg) {
     return message_id + "\n" + op + "\n" + client_id + "\n" + topicId + "\n" + msg;
 }

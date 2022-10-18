@@ -28,6 +28,6 @@ bool confirmed_operation(string msg);
  * @param clientId client id
  * @param topicId topic id
 */
-void check_subscription(string clientId, string topicId);
+void check_subscription(string clientId, string topicId, string op);
 
 #endif

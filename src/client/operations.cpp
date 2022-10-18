@@ -52,7 +52,11 @@ bool confirmed_operation(string msg) {
 }
 
 
-void check_subscription(string clientId, string topicId) {
+void check_subscription(string clientId, string topicId, string op) {
+  // if the current operation is one of this, we dont need to restore.
+  if (op == SUBSCRIBE_MSG || op == UNSUBSCRIBE_MSG)
+    return;
+
   string lastSubId = get_last_message_id(clientId, topicId, SUBSCRIBE_MSG);
   string lastUnsubId = get_last_message_id(clientId, topicId, UNSUBSCRIBE_MSG);
 
@@ -74,7 +78,7 @@ void check_subscription(string clientId, string topicId) {
     fileName = get_filename(clientId, topicId, UNSUBSCRIBE_MSG);
   } else {
     // there are no subscription messages to be made
-    return
+    return;
   }
 
   remove(fileName.c_str());
