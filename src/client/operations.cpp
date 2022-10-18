@@ -53,15 +53,12 @@ bool confirmed_operation(string msg) {
 
 
 void check_subscription(string clientId, string topicId, string op) {
-  // if the current operation is one of this, we dont need to restore.
-  if (op == SUBSCRIBE_MSG || op == UNSUBSCRIBE_MSG)
-    return;
 
   string lastSubId = get_last_message_id(clientId, topicId, SUBSCRIBE_MSG);
   string lastUnsubId = get_last_message_id(clientId, topicId, UNSUBSCRIBE_MSG);
 
   string fileName;
-  if (!lastSubId.empty()) {
+  if (!lastSubId.empty() && op != SUBSCRIBE_MSG) {
     string subMsg = create_message(lastSubId, clientId, topicId, SUBSCRIBE_MSG);
     if (!process_operation(SUBSCRIBE_MSG, subMsg)) {
       string err = "ERROR: could not subscribe to the topic";
@@ -69,7 +66,7 @@ void check_subscription(string clientId, string topicId, string op) {
     }
 
     fileName = get_filename(clientId, topicId, SUBSCRIBE_MSG);
-  } else if (!lastUnsubId.empty()) {
+  } else if (!lastUnsubId.empty() && op != UNSUBSCRIBE_MSG) {
     string unsubMsg = create_message(lastUnsubId, clientId, topicId, UNSUBSCRIBE_MSG);
     if (process_operation(UNSUBSCRIBE_MSG, unsubMsg)) {
       string err = "ERROR: could not unsubscribe from topic";
