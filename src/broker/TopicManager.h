@@ -19,6 +19,7 @@ class TopicManager {
     private:
         map<string, pair<msgs, subscribers>> topics; // <topicName, <messages, subscribers>>
         map<string, set<string>> messagesIds; // <topicName, <messageIds>>
+        map<string, map<string, pair<string, string>>> lastMessages; // <topicName, <clientId, <lastSubMsgId, lastUnsubMsgId>>>
     public:
         TopicManager();
         void createTopic(string topicName);
@@ -29,8 +30,8 @@ class TopicManager {
         void addTopicMsg(string topicName, string messageId, string msg);
         void removeTopicMsg(string topicName);
         
-        void handleSubscription(string topicName, string clientId);
-        void handleUnsubscription(string topicName, string clientId);
+        void handleSubscription(string topicName, string clientId, string messageId);
+        void handleUnsubscription(string topicName, string clientId, string messageId);
         void handlePut(string topicName, string messageId, string message);
         string handleGet(string topicName, string clientId, string messageId);
 

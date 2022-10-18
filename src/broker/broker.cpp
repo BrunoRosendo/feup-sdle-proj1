@@ -54,9 +54,9 @@ int main ()
                 getline(ss, payload);
                 topicManager.handlePut(topicId, messageId, payload);
             } else if (op == SUBSCRIBE_MSG) {
-                topicManager.handleSubscription(topicId, clientId);
+                topicManager.handleSubscription(topicId, clientId, messageId);
             } else if (op == UNSUBSCRIBE_MSG) {
-                topicManager.handleUnsubscription(topicId, clientId);
+                topicManager.handleUnsubscription(topicId, clientId, messageId);
             } else if (op == GET_MSG) {
                 string payload = topicManager.handleGet(topicId, clientId, messageId);
                 reply = payload;

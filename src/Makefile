@@ -25,3 +25,5 @@ $(CLIENT_EXEC): $(CLIENT_OBJ)
 
 clean:
 	rm -rf $(BROKER_EXEC) $(CLIENT_EXEC) client/*.o client/*.d broker/*.o broker/*.d
+clean-data:
+	rm -rf ../data

@@ -11,6 +11,7 @@ void TopicManager::createTopic(string topicName) {
     if (topics.find(topicName) == topics.end()) {
         topics[topicName] = make_pair(msgs(), subscribers());
         messagesIds[topicName] = set<string>();
+        lastMessages[topicName] = map<string, pair<string, string>>();
     }
 }
 void TopicManager::deleteTopic(string topicName) {
@@ -33,7 +34,7 @@ void TopicManager::removeTopicMsg(string topicName) {
     }
 }
 
-void TopicManager::handleSubscription(string topicName, string clientId) {
+void TopicManager::handleSubscription(string topicName, string clientId, string messageId) {
     // check if the topic exists
     if (topics.find(topicName) == topics.end()) {
         // if not, create it
@@ -41,16 +42,23 @@ void TopicManager::handleSubscription(string topicName, string clientId) {
     }
 
     // add the client to the topic's subscribers
-
     if (topics[topicName].second.find(clientId) == topics[topicName].second.end()) {
-        topics[topicName].second[clientId] = make_pair("", 0);
+        topics[topicName].second[clientId] = make_pair("_", 0);
+        if (lastMessages[topicName].find(clientId) == lastMessages[topicName].end()) {
+            lastMessages[topicName][clientId] = make_pair("_", "_");
+        }
+        lastMessages[topicName][clientId].first = messageId;
+    }
+    else if (messageId == lastMessages[topicName][clientId].first) {
+        // if the client is already subscribed to the topic and the messageId is the same as the lastSubMsgId, do nothing
+        return;
     }
     else {
         string err = "Client already subscribed to topic";
         throw err;
     }
 }
-void TopicManager::handleUnsubscription(string topicName, string clientId) {
+void TopicManager::handleUnsubscription(string topicName, string clientId, string messageId) {
     // check if the topic exists
     if (topics.find(topicName) == topics.end()) {
         string err = "Topic does not exist";
@@ -60,6 +68,14 @@ void TopicManager::handleUnsubscription(string topicName, string clientId) {
     // remove the client from the topic's subscribers
     if (topics[topicName].second.find(clientId) != topics[topicName].second.end()) {
         topics[topicName].second.erase(clientId);
+        if (lastMessages[topicName].find(clientId) == lastMessages[topicName].end()) {
+            lastMessages[topicName][clientId] = make_pair("_", "_");
+        }
+        lastMessages[topicName][clientId].second = messageId;
+    }
+    else if (messageId == lastMessages[topicName][clientId].second) {
+        // if the client is already unsubscribed from the topic and the messageId is the same as the lastUnsubMsgId, do nothing
+        return;
     }
     else {
         string err = "Client not subscribed to topic";
@@ -95,7 +111,7 @@ string TopicManager::handleGet(string topicName, string clientId, string message
     uint lastReadMsgIndex = topics[topicName].second[clientId].second;
     string prevMsgId = topics[topicName].second[clientId].first;
 
-    if (messageId != prevMsgId && prevMsgId != "") {
+    if (messageId != prevMsgId && prevMsgId != "_") {
         lastReadMsgIndex++;
     }
 
@@ -151,6 +167,17 @@ ostream& operator<< (ostream& os, TopicManager& tm) {
         }
     }
 
+    os << tm.lastMessages.size() << endl;
+    for (auto& topic : tm.lastMessages) {
+        os << topic.first << endl;
+        os << topic.second.size() << endl;
+        for (auto& client : topic.second) {
+            os << client.first << endl;
+            os << client.second.first << endl;
+            os << client.second.second << endl;
+        }
+    }
+
     return os;
 }
 
@@ -194,6 +221,22 @@ istream& operator>> (istream& is, TopicManager& tm) {
             string msgId;
             is >> msgId;
             tm.messagesIds[topicName].insert(msgId);
+        }
+    }
+
+    uint lastMessagesSize;
+    is >> lastMessagesSize;
+    for (uint i = 0; i < lastMessagesSize; i++) {
+        string topicName;
+        is >> topicName;
+        tm.lastMessages[topicName] = map<string, pair<string, string>>();
+
+        uint clientsSize;
+        is >> clientsSize;
+        for (uint j = 0; j < clientsSize; j++) {
+            string clientId, lastSubMsgId, lastUnsubMsgId;
+            is >> clientId >> lastSubMsgId >> lastUnsubMsgId;
+            tm.lastMessages[topicName][clientId] = make_pair(lastSubMsgId, lastUnsubMsgId);
         }
     }
 
