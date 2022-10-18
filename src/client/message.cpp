@@ -1,5 +1,6 @@
 #include "message.h"
 #include <ctime>
+#include <filesystem>
 #include <functional>
 
 using namespace std;
@@ -42,8 +43,7 @@ string send_message(string msg) {
                 return reply;
             } else if (--retries_left == 0) {
                 client.close();
-                string message = "server seems to be offline, abandoning";
-                throw message;
+                throw string("server seems to be offline, abandoning");
             }
             else
             {
@@ -72,27 +72,23 @@ string parse_message(int size, char** raw_msg) {
     return id + "\n" + message;
 }
 
+// TODO Should this be done for sub/unsub as well? Maybe do for every message?
 string get_filename(string clientId, string topicId, string op) {
     if (op == GET_MSG) {
-        return FOLDER_PATH + clientId + "/" + GET_PATH + topicId;
+        return FOLDER_PATH + clientId + "/" + GET_PATH + topicId + ".txt";
     } else if (op == PUT_MSG) {
-        return FOLDER_PATH + clientId + "/" + PUT_PATH + topicId;
+        return FOLDER_PATH + clientId + "/" + PUT_PATH + topicId + ".txt";
     }
 
     return "";
 }
 
 string get_last_message(string clientId, string topicId, string op){
-    fstream file;
-    string fileName;
-    if (op == GET_MSG) {
-        fileName = FOLDER_PATH + clientId + "/" + GET_PATH + topicId + ".txt";
-    } else if (op == PUT_MSG) {
-        fileName = FOLDER_PATH + clientId + "/" + PUT_PATH + topicId + ".txt";
-    }
+    ifstream file;
+    string fileName = get_filename(clientId, topicId, op);
 
     string lastMessage;
-    file.open(fileName, fstream::out | fstream::in);
+    file.open(fileName);
     if (file.is_open()) {
       if (file.peek() != EOF) {
           getline(file, lastMessage);
@@ -104,10 +100,14 @@ string get_last_message(string clientId, string topicId, string op){
 }
 
 void save_error_message(string clientId, string topicId, string op, string message) {
-    fstream file;
+    string directory = FOLDER_PATH + clientId;;
+    if (!filesystem::is_directory(directory) || !filesystem::exists(directory))
+        filesystem::create_directories(directory);
+
+    ofstream file;
     string fileName = get_filename(clientId, topicId, op);
 
-    file.open(fileName, fstream::out | fstream::trunc);
+    file.open(fileName); // TODO is truncate right?
     file << message;
     file.close();
 }
