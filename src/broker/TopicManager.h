@@ -35,6 +35,9 @@ class TopicManager {
         void handlePut(string topicName, string messageId, string message);
         string handleGet(string topicName, string clientId, string messageId);
 
+        void garbageCollectMessages(string topicName);
+        void garbageCollectTopics(string topicName);
+
         void serialize();
         friend istream& operator>> (istream& is, TopicManager& tm);
         friend ostream& operator<< (ostream& os, TopicManager& tm);

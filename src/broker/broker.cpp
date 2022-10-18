@@ -15,7 +15,7 @@ using namespace std;
 
 /* 
 TODO: 
-- Garbage Collection for topic messages (seen by every subscriber) & topics without subscribers
+- Confirm if Garbage Collection is ok
 */
 
 int main ()
