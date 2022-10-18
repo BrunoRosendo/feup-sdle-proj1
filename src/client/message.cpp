@@ -115,8 +115,8 @@ string save_message_id(string clientId, string topicId, string op, string messag
 }
 
 string get_hash(string msg) {
-    time_t result = time(nullptr);
-    msg = msg + asctime(localtime(&result));
+    auto start = std::chrono::high_resolution_clock::now(); 
+    msg = msg + to_string(start.time_since_epoch().count());
     size_t str_hash = hash<string>{}(msg);
     return to_string(str_hash);
 }
