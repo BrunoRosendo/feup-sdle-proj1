@@ -131,8 +131,6 @@ string TopicManager::handleGet(string topicName, string clientId, string message
     topics[topicName].second[clientId].second = lastReadMsgIndex;
     topics[topicName].second[clientId].first = messageId;
 
-    cout << "lastReadMsgIndex: " << lastReadMsgIndex << endl;
-
     // get the new message
     string msg = topics[topicName].first[lastReadMsgIndex].second;
     
