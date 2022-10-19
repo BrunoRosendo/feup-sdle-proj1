@@ -25,13 +25,16 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+
+    /* 
+    We don't attempt to recover from a failed subscription/unsubscription
     try {
         check_subscription(clientId, topicId, op);
     } catch (string msg) {
         cout << msg << "\n";
         cout << "ERROR: could not restore subscription state from failure" << "\n";
         exit(1);
-    }
+    } */
 
     string messageId = get_last_message_id(clientId, topicId, op);
     string message = parse_message(argc, argv, &messageId);
@@ -39,7 +42,6 @@ int main(int argc, char** argv) {
     string fileName = save_message_id(clientId, topicId, op, messageId);
 
     try {
-        cout << "message ID:  " << messageId << endl;
         process_operation(op, message);
         // if the message was sent successfully, then delete the last message from file
         remove(fileName.c_str());
