@@ -2,26 +2,28 @@ CC=g++
 CFLAGS = -Wall
 LIBS = -lzmq -lzmqpp
 
-SERVER_SRC = server.cpp
-CLIENT_SRC = client.cpp
+BROKER_SRC = broker/broker.cpp broker/TopicManager.cpp
+CLIENT_SRC = client/client.cpp client/message.cpp client/operations.cpp
 
-SERVER_OBJ = $(SERVER_SRC:.c=.o)
-CLIENT_OBJ = $(CLIENT_SRC:.c=.o)
+BROKER_OBJ = $(BROKER_SRC:.cpp=.o)
+CLIENT_OBJ = $(CLIENT_SRC:.cpp=.o)
 
-SERVER_EXEC = server
-CLIENT_EXEC = client
+BROKER_EXEC = broker_exec
+CLIENT_EXEC = client_exec
 
 
-all: $(SERVER_EXEC) $(CLIENT_EXEC)
+all: $(BROKER_EXEC) $(CLIENT_EXEC)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(SERVER_EXEC): $(SERVER_OBJ)
-	$(CC) $(CFLAGS) -o $@ $(SERVER_OBJ) $(LIBS)
+$(BROKER_EXEC): $(BROKER_OBJ)
+	$(CC) $(CFLAGS) -o $@ $(BROKER_OBJ) $(LIBS)
 
 $(CLIENT_EXEC): $(CLIENT_OBJ)
 	$(CC) $(CFLAGS) -o $@ $(CLIENT_OBJ) $(LIBS)
 
 clean:
-	rm -rf $(SERVER_EXEC) $(CLIENT_EXEC) *.o *.d
+	rm -rf $(BROKER_EXEC) $(CLIENT_EXEC) client/*.o client/*.d broker/*.o broker/*.d
+clean-data:
+	rm -rf ../data

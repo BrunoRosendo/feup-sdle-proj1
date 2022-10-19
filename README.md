@@ -1,10 +1,31 @@
 # SDLE First Assignment
 
-SDLE First Assignment of group T&lt;m&gt;&lt;n&gt;G&lt;p&gt;&lt;q&gt;.
+SDLE First Assignment of group T04G11.
 
 Group members:
 
-1. &lt;first name&gt; &lt;family name&gt; (&lt;email address&gt;)
-2. &lt;first name&gt; &lt;family name&gt; (&lt;email address&gt;)
-3. &lt;first name&gt; &lt;family name&gt; (&lt;email address&gt;)
-4. &lt;first name&gt; &lt;family name&gt; (&lt;email address&gt;)
+1. Bruno Rosendo (up201906334@fe.up.pt)
+2. Henrique Nunes (up201906852@fe.up.pt)
+3. João Mesquita (up201906682@fe.up.pt)
+4. Rui Alves (up201905853@fe.up.pt)
+
+## How to run
+
+First of all, you must build the project by simply running `make` under the `src/` folder.
+
+### Broker
+To run broker you simple need to run "./broker_exec"
+
+### Client
+To run client, you must specify the operation, client id, topic id and an optional message, accordint to the operation:
+
+- ./client \<op> clientId topicId \<message>
+- ./client get 1 topic1
+- ./client put 1 topic1 "this is a nice message"
+
+## Data
+
+### Client data
+The data stored in the client is contained in folders whose names are the client IDs.
+Those folders have files whose name is the topic's ID and its
+information is the current message ID of the missing message on that topic.

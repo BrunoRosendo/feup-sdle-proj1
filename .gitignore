@@ -1,3 +1,6 @@
 libs
-client
-server
+*_exec
+.vscode
+*.o
+*.d
+data
