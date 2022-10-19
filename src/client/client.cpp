@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     string fileName = save_message_id(clientId, topicId, op, messageId);
 
     try {
-        cout << "asked for: " << messageId << endl;
+        cout << "message ID:  " << messageId << endl;
         process_operation(op, message);
         // if the message was sent successfully, then delete the last message from file
         remove(fileName.c_str());
