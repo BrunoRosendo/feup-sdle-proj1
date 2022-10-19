@@ -1,10 +1,3 @@
-//
-// Lazy Pirate server
-// Binds REQ socket to tcp://*:5555
-// Like hwserver except:
-// - echoes request as-is
-// - randomly runs slowly, or exits to simulate a crash.
-//
 #include <zmqpp/zmqpp.hpp>
 #include <unistd.h>
 #include <sstream>
@@ -12,11 +5,6 @@
 #include "TopicManager.h"
 
 using namespace std;
-
-/* 
-TODO: 
-- Confirm if Garbage Collection is ok
-*/
 
 int main ()
 {
