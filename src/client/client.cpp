@@ -4,7 +4,6 @@
 #include <iostream>
 #include <stdio.h>
 
-
 using namespace std;
 
 
@@ -26,7 +25,15 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    string messageId = get_last_message(clientId, topicId, op);
+    try {
+        check_subscription(clientId, topicId, op);
+    } catch (string msg) {
+        cout << msg << "\n";
+        cout << "ERROR: could not restore subscription state from failure" << "\n";
+        exit(1);
+    }
+
+    string messageId = get_last_message_id(clientId, topicId, op);
     string message = parse_message(argc, argv, &messageId);
     // Save in case of crash
     string fileName = save_message_id(clientId, topicId, op, messageId);
