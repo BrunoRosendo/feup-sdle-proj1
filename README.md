@@ -1,13 +1,13 @@
 # SDLE First Assignment
 
-SDLE First Assignment of group T&lt;m&gt;&lt;n&gt;G&lt;p&gt;&lt;q&gt;.
+SDLE First Assignment of group T04G11.
 
 Group members:
 
-1. &lt;Bruno&gt; &lt;Rosendo&gt; (&lt;up201906334@fe.up.pt&gt;)
-2. &lt;Henrique&gt; &lt;Nunes&gt; (&lt;up201906852@fe.up.pt&gt;)
-3. &lt;João&gt; &lt;Mesquita&gt; (&lt;up201906682@fe.up.pt&gt;)
-4. &lt;Rui&gt; &lt;Alves&gt; (&lt;up201905853@fe.up.pt&gt;)
+1. Bruno Rosendo (up201906334@fe.up.pt)
+2. Henrique Nunes (up201906852@fe.up.pt)
+3. João Mesquita (up201906682@fe.up.pt)
+4. Rui Alves (up201905853@fe.up.pt)
 
 ## How to run
 
