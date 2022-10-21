@@ -241,6 +241,7 @@ istream& operator>> (istream& is, TopicManager& tm) {
             tm.topics[topicName].second[clientId] = make_pair(msgId, lastReadMsgIndex);
         }
     }
+    cout << 1 << endl;
 
     uint messagesIdsSize;
     is >> messagesIdsSize;
@@ -257,6 +258,7 @@ istream& operator>> (istream& is, TopicManager& tm) {
             tm.messagesIds[topicName].insert(msgId);
         }
     }
+    cout << 2 << endl;
 
     uint lastMessagesSize;
     is >> lastMessagesSize;
@@ -273,6 +275,7 @@ istream& operator>> (istream& is, TopicManager& tm) {
             tm.lastMessages[topicName][clientId] = make_pair(lastSubMsgId, lastUnsubMsgId);
         }
     }
+    cout << 3 << endl;
 
     return is;
 }
