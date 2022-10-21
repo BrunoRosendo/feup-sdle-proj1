@@ -9,11 +9,14 @@
 #include <fstream>
 
 #define REQUEST_TIMEOUT     2500    //  msecs, (> 1000!)
+#define GET_WAIT_TIME       3          //  secs
 #define REQUEST_RETRIES     3       //  Before we abandon
+#define ABORT_ON_FAILURE   false    
 #define SERVER_URL "tcp://localhost:5555"
 
-#define ACK_MSG "SUCCESS"
-#define NACK_MSG "FAIL"
+#define ACK_MSG "[SUCCESS]"
+#define NACK_MSG "[FAIL]"
+#define NO_MSGS_MSG "[FAIL] No new messages for the client"
 #define GET_MSG "get"
 #define PUT_MSG "put"
 #define UNSUBSCRIBE_MSG "unsub"

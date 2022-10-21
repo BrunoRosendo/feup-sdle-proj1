@@ -30,6 +30,12 @@ bool process_operation(string op, string msg) {
 
 bool get_operation(string msg) {
   string res = send_message(msg);
+  while (res == NO_MSGS_MSG) {
+    cout << "No messages available. Waiting for new messages..." << endl;
+    sleep(GET_WAIT_TIME);
+    res = send_message(msg);
+  }
+
   if (res.rfind(NACK_MSG, 0) == 0) {
     cout << "ERROR (server): " << res << endl;
     return false;

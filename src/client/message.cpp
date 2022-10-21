@@ -28,32 +28,26 @@ string send_message(string msg) {
     while (true) {
         client.send(msg);
 
-        bool expect_reply = true;
-        while (expect_reply) {
-            //  Poll socket for a reply, with timeout
-            zmqpp::poller poller;
-            poller.add(client);
-            poller.poll(REQUEST_TIMEOUT);
+        //  Poll socket for a reply, with timeout
+        zmqpp::poller poller;
+        poller.add(client);
+        poller.poll(REQUEST_TIMEOUT);
 
-            //  If we got a reply, process it
-            if (poller.events(client) & ZMQ_POLLIN) {
-                string reply;
-                client.receive(reply);
-                return reply;
-            } else if (--retries_left == 0) {
-                client.close();
-                throw string("server seems to be offline, abandoning");
-            }
-            else
-            {
-                cout << "WARNING: no response from server, retrying..." << endl;
+        //  If we got a reply, process it
+        if (poller.events(client) & ZMQ_POLLIN) {
+            string reply;
+            client.receive(reply);
+            client.close();
+            return reply;
+        } else if (--retries_left == 0 && ABORT_ON_FAILURE) {
+            client.close();
+            throw string("server seems to be offline, abandoning");
+        } else {
+            cout << "WARNING: no response from server, retrying..." << endl;
 
-                //  Old socket is confused; close it and open a new one
-                client.close();
-                client = s_client_socket(context);
-                //  Send request again, on new socket
-                client.send(msg);
-            }
+            //  Old socket is confused; close it and open a new one
+            client.close();
+            client = s_client_socket(context);
         }
     }
 }
