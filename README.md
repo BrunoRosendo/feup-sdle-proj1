@@ -19,9 +19,9 @@ To run broker you simple need to run "./broker_exec"
 ### Client
 To run client, you must specify the operation, client id, topic id and an optional message, accordint to the operation:
 
-- ./client_exec \<op> clientId topicId \<message>
-- ./client_exec get 1 topic1
-- ./client_exec put 1 topic1 "this is a nice message"
+- client_exec <operation> <clientId> <topicId> [message]
+- client_exec get 1 topic1
+- client_exec put 1 topic1 "this is a nice message"
 
 ## Data
 
@@ -29,3 +29,45 @@ To run client, you must specify the operation, client id, topic id and an option
 The data stored in the client is contained in folders whose names are the client IDs.
 Those folders have files whose name is composed by the operation and the topic's ID. Its
 information is the current message ID of the missing message on that topic.
+
+
+### Broker’s topic_manager.txt file structure:
+numberTopics
+for each topic:
+	topicName
+	numberMessages
+	for each message:
+		messageId
+		message
+	numberSubscribers
+	for each subscriber:
+		clientId
+		lastMessageId
+		lastReadMsgIndex
+numberTopics
+for each topic:
+	topicName
+	numberTopicMessages
+	for each message:
+		messageId
+numberTopics
+for each topic:
+	topicName
+	lastMessagesTopicSize
+	for each client:
+		clientId
+		lastSubMsgId
+		lastUnsubMsgId
+
+### Clients’ saved files structure:
+
+File name Explanation:
+
+- The Client folder contains a folder for each clientID (named after its id).
+- Inside a Client’s folder, they can have the following files:
+    - get_<topic_name>.txt
+    - put_<topic_name>.txt
+    - sub_<topic_name>.txt
+    - unsub_<topic_name>.txt
+
+Files data: MessageId
