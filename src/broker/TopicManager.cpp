@@ -217,59 +217,92 @@ ostream& operator<< (ostream& os, TopicManager& tm) {
 
 // Deserialize TopicManager fields from is
 istream& operator>> (istream& is, TopicManager& tm) {
+    
     uint topicsSize;
     is >> topicsSize;
+    is.ignore(99999, '\n');
+
     for (uint i = 0; i < topicsSize; i++) {
         string topicName;
-        is >> topicName;
+        getline(is, topicName);
+
         tm.topics[topicName] = make_pair(msgs(), subscribers());
 
         uint msgsSize;
         is >> msgsSize;
+        is.ignore(99999, '\n');
+
         for (uint j = 0; j < msgsSize; j++) {
             string msgId, msg;
-            is >> msgId >> msg;
+            getline(is, msgId);
+
+            getline(is, msg);
+
             tm.topics[topicName].first.push_back(make_pair(msgId, msg));
         }
 
         uint subscribersSize;
         is >> subscribersSize;
+        is.ignore(99999, '\n');
+
         for (uint j = 0; j < subscribersSize; j++) {
             string clientId, msgId;
             uint lastReadMsgIndex;
-            is >> clientId >> msgId >> lastReadMsgIndex;
+            getline(is, clientId);
+
+            getline(is, msgId);
+
+            is >> lastReadMsgIndex;
+            is.ignore(99999, '\n');
+
             tm.topics[topicName].second[clientId] = make_pair(msgId, lastReadMsgIndex);
         }
     }
 
+
     uint messagesIdsSize;
     is >> messagesIdsSize;
+    is.ignore(99999, '\n');
+
     for (uint i = 0; i < messagesIdsSize; i++) {
         string topicName;
-        is >> topicName;
+        getline(is, topicName);
+
         tm.messagesIds[topicName] = set<string>();
 
         uint msgIdsSize;
         is >> msgIdsSize;
+        is.ignore(99999, '\n');
+
         for (uint j = 0; j < msgIdsSize; j++) {
             string msgId;
-            is >> msgId;
+            getline(is, msgId);
             tm.messagesIds[topicName].insert(msgId);
         }
     }
 
     uint lastMessagesSize;
     is >> lastMessagesSize;
+    is.ignore(99999, '\n');
+
     for (uint i = 0; i < lastMessagesSize; i++) {
         string topicName;
-        is >> topicName;
+        getline(is, topicName);
+
         tm.lastMessages[topicName] = map<string, pair<string, string>>();
 
         uint clientsSize;
         is >> clientsSize;
+        is.ignore(99999, '\n');
+
         for (uint j = 0; j < clientsSize; j++) {
             string clientId, lastSubMsgId, lastUnsubMsgId;
-            is >> clientId >> lastSubMsgId >> lastUnsubMsgId;
+            getline(is, clientId);
+
+            getline(is, lastSubMsgId);
+
+            getline(is, lastUnsubMsgId);
+
             tm.lastMessages[topicName][clientId] = make_pair(lastSubMsgId, lastUnsubMsgId);
         }
     }
