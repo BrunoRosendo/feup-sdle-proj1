@@ -14,12 +14,12 @@ Group members:
 First of all, you must build the project by simply running `make` under the `src/` folder.
 
 ### Broker
-To run the broker you simple need to run "./broker_exec"
+To run the broker you simple need to run "broker_exec"
 
 ### Client
 To run the client, you must specify the operation, client id, topic id and an optional message, according to the operation:
 
-- client_exec <operation> <clientId> <topicId> [message]
+- client_exec \<operation\> \<clientId\> \<topicId\> [message]
 - client_exec get 1 topic1
 - client_exec put 1 topic1 "this is a nice message"
 
