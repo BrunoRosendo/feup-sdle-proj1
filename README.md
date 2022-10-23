@@ -9,6 +9,10 @@ Group members:
 3. João Mesquita (up201906682@fe.up.pt)
 4. Rui Alves (up201905853@fe.up.pt)
 
+## Required Libraries
+
+Since the project is implemented on top of ZeroMQ Library, the user must install the required libraries libzqm and zqmpp to use it, as explained in https://zeromq.org/download/.
+
 ## How to run
 
 First of all, you must build the project by simply running `make` under the `src/` folder.
